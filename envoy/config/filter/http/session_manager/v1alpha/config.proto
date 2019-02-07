@@ -24,7 +24,6 @@ message ForwardRule {
   string preamble = 2 [(validate.rules).string.min_bytes = 1];
 }
 
-
 // This message specifies the configuation needed to enable both the generation
 // and validation of session binding tokens to provide cross-site request forgery protection.
 //
@@ -39,13 +38,32 @@ message ForwardRule {
 // [#not-implemented-hide:]
 message TokenBinding {
   // The 256-bit base64 encoded shared secret used to validate cryptographic session token bindings.
-  string secret = 1 [(validate.rules).string.min_bytes = 44, (validate.rules).string.max_bytes = 44];
+  string secret = 1
+      [(validate.rules).string.min_bytes = 44, (validate.rules).string.max_bytes = 44];
   // The name of the session token cookie. It is recommended that this value start with
-  // the string "__Secure-" as described at https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie.
+  // the string "__Secure-" as described at
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie.
   string token = 2;
-  // The name of the header that includes the cryptographic session token binding. A good choices for this field are
-  // x-xsrf-token or x-csrf-token
+  // The name of the header that includes the cryptographic session token binding. A good choices
+  // for this field are x-xsrf-token or x-csrf-token
   string binding = 3;
+
+  enum HkdfHash {
+    SHA256 = 0;
+    SHA384 = 1;
+    SHA512 = 2;
+  }
+
+  // The hash algorithm to be used in the HKDF key derivation
+  HkdfHash hkdf_hash = 4;
+
+  enum EncryptionAlg {
+    AES128GCM = 0;
+    AES256GCM = 1;
+  }
+
+  // The encryption algorithm to use for token encryption
+  EncryptionAlg encryption_alg = 5;
 }
 
 // This message specifies the configuration of a Session Manager filter that
